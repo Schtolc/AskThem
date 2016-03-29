@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Starter Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/starter-template.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <span class="glyphicon glyphicon-fire" aria-hidden="true"></span>
+                AskThem</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default alert-danger">Ask!</button>
+            </form>
+
+            <ul class="nav navbar-nav navbar-right">
+                <!--<li><a href="#">Log in</a></li>-->
+                <li> <img src="images/avatar.jpg" class="img-thumbnail " id="avatar"></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dr.Pepper <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Settings</a></li>
+                        <li><a href="#">Answers</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Log out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<div class="container">
+
+
+
+
+    <div class="row">
+        <div class="col-md-9">
+            <h2>New Question</h2>
+            <hr class="hr-style">
+            <form class="form-horizontal">
+                <div class="form-group  has-error has-feedback">
+                    <label for="inputTitle" class="col-sm-1 control-label">Title</label>
+                    <div class="col-sm-11">
+                        <input class="form-control" id="inputTitle" placeholder="Enter your title" maxlength="35">
+                        <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                        <p>Invalid title</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputText" class="col-sm-1 control-label">Text</label>
+                    <div class="col-sm-11">
+                        <textarea maxlength="500" rows="15" class="form-control" id="inputText" placeholder="Enter your question"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputTags" class="col-sm-1 control-label">Tags</label>
+                    <div class="col-sm-11">
+                        <input class="form-control" id="inputTags" placeholder="Enter tags" maxlength="35">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-11">
+                        <button type="submit" class="btn btn-default alert-danger">Ask</button>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+
+        <div class="col-md-3">
+            <h2>Popular tags</h2>
+            <hr class="hr-style">
+            <p><a href="#">perl</a>&nbsp;&nbsp;&nbsp;<a href="#">python</a>&nbsp;&nbsp;&nbsp;<a href="#">TechnoPark</a>
+            </p>
+            <p><a href="#">MySQL</a>&nbsp;&nbsp;&nbsp;<a href="#">Django</a></p>
+            <p><a href="#">Mail.ru</a>&nbsp;&nbsp;&nbsp;<a href="#">Voloshin</a>&nbsp;&nbsp;&nbsp;<a
+                    href="#">Firefox</a></p>
+            <h2>Best Members</h2>
+            <hr class="hr-style">
+            <p><a href="#">Mr. Freeman</a></p>
+            <p><a href="#">Dr. House</a></p>
+            <p><a href="#">Bender</a></p>
+            <p><a href="#">Queen Victoria</a></p>
+            <p><a href="#">V Pupkin</a></p>
+        </div>
+    </div>
+
+</div><!-- /.container -->
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>
