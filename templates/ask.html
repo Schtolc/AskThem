@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<h2>New Question</h2>
+<hr class="hr-style">
+<form class="form-horizontal">
+    <div class="form-group  has-error has-feedback">
+        <label for="inputTitle" class="col-sm-1 control-label">Title</label>
+        <div class="col-sm-11">
+            <input class="form-control" id="inputTitle" placeholder="Enter your title" maxlength="35">
+            <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+            <p>Invalid title</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputText" class="col-sm-1 control-label">Text</label>
+        <div class="col-sm-11">
+            <textarea maxlength="500" rows="15" class="form-control" id="inputText"
+                      placeholder="Enter your question"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputTags" class="col-sm-1 control-label">Tags</label>
+        <div class="col-sm-11">
+            <input class="form-control" id="inputTags" placeholder="Enter tags" maxlength="35">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-1 col-sm-11">
+            <button type="submit" class="btn btn-default alert-danger">Ask</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

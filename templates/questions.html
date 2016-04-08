@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block content %}
+    {% for question in questions  %}
+        {% include "single_question.html" with likes=question.likes title=question.title tags=question.tags body=question.body %}
+    {% endfor %}
+{% endblock %}
