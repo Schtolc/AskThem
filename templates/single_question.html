@@ -18,13 +18,12 @@
         </div>
     </div>
     <div class="col-md-10">
-        <h2><a href="#"> {{title}}</a></h2>
+        <h2><a href="{% url 'id_question' id %}"> {{title}}</a></h2>
         <p>{{body}}</p>
         <p>
-            <a href="#">Answer</a>&nbsp&nbsp;
             Tags:&nbsp;
             {% for tag in tags %}
-            <a href="#">{{tag}}</a>&nbsp;
+            <a href="{% url 'tag_questions' tag %}">{{tag}}</a>&nbsp;
             {% endfor %}
         </p>
     </div>

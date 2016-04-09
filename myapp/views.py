@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import random
 
 # Create your views here.
@@ -34,18 +35,35 @@ for i in range(10):
 
 
 def new_questions(request):
-    return render(request, 'questions.html',
-                  {'questions': questions[:10],
-                   'title': 'New questions',
-                   })
+    question_list = questions
+    paginator = Paginator(question_list, 10)
+    page = request.GET.get('page')
+    try:
+        page_questions = paginator.page(page)
+    except PageNotAnInteger:
+        page_questions = paginator.page(1)
+    except EmptyPage:
+        page_questions = paginator.page(paginator.num_pages)
+
+    return render(request, 'questions.html', {'questions': page_questions,
+                                              'title': 'New questions',
+                                              })
 
 
 def hot_questions(request):
-    tmp_questions = sorted(questions, key=lambda k: k['likes'], reverse=True)
-    return render(request, 'questions.html',
-                  {'questions': tmp_questions[:10],
-                   'title': 'Hot questions',
-                   })
+    question_list = sorted(questions, key=lambda k: k['likes'], reverse=True)
+    paginator = Paginator(question_list, 10)
+    page = request.GET.get('page')
+    try:
+        page_questions = paginator.page(page)
+    except PageNotAnInteger:
+        page_questions = paginator.page(1)
+    except EmptyPage:
+        page_questions = paginator.page(paginator.num_pages)
+
+    return render(request, 'questions.html', {'questions': page_questions,
+                                              'title': 'Hot questions',
+                                              })
 
 
 def tags_question(request, tag):
@@ -53,15 +71,34 @@ def tags_question(request, tag):
     for question in questions:
         if tag in question['tags']:
             tmp_questions.append(question)
-    return render(request, 'questions.html', {
-        'questions': tmp_questions,
-        'title': 'Questions with tag: ' + tag,
-    })
+    question_list = tmp_questions
+    paginator = Paginator(question_list, 10)
+    page = request.GET.get('page')
+    try:
+        page_questions = paginator.page(page)
+    except PageNotAnInteger:
+        page_questions = paginator.page(1)
+    except EmptyPage:
+        page_questions = paginator.page(paginator.num_pages)
+
+    return render(request, 'questions.html', {'questions': page_questions,
+                                              'title': 'Questions with tag: ' + tag,
+                                              })
 
 
 def id_question(request, id):
+    answers_list = answers
+    paginator = Paginator(answers_list, 3)
+    page = request.GET.get('page')
+    try:
+        page_answers = paginator.page(page)
+    except PageNotAnInteger:
+        page_answers = paginator.page(1)
+    except EmptyPage:
+        page_answers = paginator.page(paginator.num_pages)
+
     return render(request, 'answers.html', {
-        'answers': answers,
+        'answers': page_answers,
         'question': questions[next(index for (index, d) in enumerate(questions) if str(d["id"]) == str(id))],
         'title': "Question# " + str(id),
     })

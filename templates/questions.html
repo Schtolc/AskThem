@@ -6,6 +6,9 @@
 
 {% block content %}
     {% for question in questions  %}
-        {% include "single_question.html" with likes=question.likes title=question.title tags=question.tags body=question.body %}
+        {% include "single_question.html" with id=question.id likes=question.likes title=question.title tags=question.tags body=question.body %}
     {% endfor %}
+    {% include "paginator.html" with pages=questions %}
 {% endblock %}
+
+
