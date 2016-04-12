@@ -2,7 +2,7 @@
     <div class="col-md-2">
         <img src="/images/answer.jpg" class="img-circle answer-pic div-center">
         <div class="div-center">
-            <h5>{{likes}}</h5>
+            <h5>{{question.likes}}</h5>
         </div>
         <div class="btn-group btn-group-justified" role="group" aria-label="...">
             <div class="btn-group" role="group">
@@ -18,11 +18,11 @@
         </div>
     </div>
     <div class="col-md-10">
-        <h2><a href="{% url 'id_question' id %}"> {{title}}</a></h2>
-        <p>{{body}}</p>
+        <h2><a href="{% url 'id_question' question.id %}"> {{question.title}}</a></h2>
+        <p>{{question.body}}</p>
         <p>
             Tags:&nbsp;
-            {% for tag in tags %}
+            {% for tag in question.tags %}
             <a href="{% url 'tag_questions' tag %}">{{tag}}</a>&nbsp;
             {% endfor %}
         </p>

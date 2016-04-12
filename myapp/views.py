@@ -34,18 +34,21 @@ for i in range(10):
     )
 
 
+def create_page(paginator, page):
+    try:
+        page_answers = paginator.page(page)
+    except PageNotAnInteger:
+        page_answers = paginator.page(1)
+    except EmptyPage:
+        page_answers = paginator.page(paginator.num_pages)
+    return page_answers
+
+
 def new_questions(request):
+    # question_list = Question.objects.new()[:10]
     question_list = questions
     paginator = Paginator(question_list, 10)
-    page = request.GET.get('page')
-    try:
-        page_questions = paginator.page(page)
-    except PageNotAnInteger:
-        page_questions = paginator.page(1)
-    except EmptyPage:
-        page_questions = paginator.page(paginator.num_pages)
-
-    return render(request, 'questions.html', {'questions': page_questions,
+    return render(request, 'questions.html', {'questions': create_page(paginator, request.GET.get('page')),
                                               'title': 'New questions',
                                               })
 
@@ -53,15 +56,7 @@ def new_questions(request):
 def hot_questions(request):
     question_list = sorted(questions, key=lambda k: k['likes'], reverse=True)
     paginator = Paginator(question_list, 10)
-    page = request.GET.get('page')
-    try:
-        page_questions = paginator.page(page)
-    except PageNotAnInteger:
-        page_questions = paginator.page(1)
-    except EmptyPage:
-        page_questions = paginator.page(paginator.num_pages)
-
-    return render(request, 'questions.html', {'questions': page_questions,
+    return render(request, 'questions.html', {'questions': create_page(paginator, request.GET.get('page')),
                                               'title': 'Hot questions',
                                               })
 
@@ -73,15 +68,7 @@ def tags_question(request, tag):
             tmp_questions.append(question)
     question_list = tmp_questions
     paginator = Paginator(question_list, 10)
-    page = request.GET.get('page')
-    try:
-        page_questions = paginator.page(page)
-    except PageNotAnInteger:
-        page_questions = paginator.page(1)
-    except EmptyPage:
-        page_questions = paginator.page(paginator.num_pages)
-
-    return render(request, 'questions.html', {'questions': page_questions,
+    return render(request, 'questions.html', {'questions': create_page(paginator, request.GET.get('page')),
                                               'title': 'Questions with tag: ' + tag,
                                               })
 
@@ -89,16 +76,8 @@ def tags_question(request, tag):
 def id_question(request, id):
     answers_list = answers
     paginator = Paginator(answers_list, 3)
-    page = request.GET.get('page')
-    try:
-        page_answers = paginator.page(page)
-    except PageNotAnInteger:
-        page_answers = paginator.page(1)
-    except EmptyPage:
-        page_answers = paginator.page(paginator.num_pages)
-
     return render(request, 'answers.html', {
-        'answers': page_answers,
+        'answers': create_page(paginator, request.GET.get('page')),
         'question': questions[next(index for (index, d) in enumerate(questions) if str(d["id"]) == str(id))],
         'title': "Question# " + str(id),
     })
