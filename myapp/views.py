@@ -1,38 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from myapp.models import *
 import random
 
+
 # Create your views here.
-
-questions = []
-answers = []
-question_tags = ['give', 'me', 'my', 'flowers', 'while', 'i', 'still', 'can', 'smell', 'them']
-
-for i in range(100):
-    questions.append(
-        {'id': i,
-         'title': 'Question #{}. Some text following question number'.format(i),
-         'body': '''Lorem ipsum dolor sit amet, adipiscing elit. Aliquam aliquet pellentesque massa et
-                   placerat.  Mauris sed nunc fringilla, faucibus tortor ac, ultrices justo. Proin id semper elit,
-                   eu efficitur libero.''',
-         'tags': [question_tags[random.randint(0, len(question_tags) - 1)],
-                  question_tags[random.randint(0, len(question_tags) - 1)],
-                  question_tags[random.randint(0, len(question_tags) - 1)]],
-         'likes': random.randint(0, 1000),
-         }
-    )
-
-for i in range(10):
-    answers.append(
-        {'id': i,
-         'body': '''Lorem ipsum dolor sit amet, adipiscing elit. Aliquam aliquet pellentesque massa et
-                   placerat.  Mauris sed nunc fringilla, faucibus tortor ac, ultrices justo. Proin id semper elit,
-                   eu efficitur libero.''',
-         'likes': random.randint(0, 1000),
-         }
-    )
-
 
 def create_page(paginator, page):
     try:
@@ -45,8 +18,7 @@ def create_page(paginator, page):
 
 
 def new_questions(request):
-    # question_list = Question.objects.new()[:10]
-    question_list = questions
+    question_list = Question.manager.new()
     paginator = Paginator(question_list, 10)
     return render(request, 'questions.html', {'questions': create_page(paginator, request.GET.get('page')),
                                               'title': 'New questions',
@@ -54,7 +26,7 @@ def new_questions(request):
 
 
 def hot_questions(request):
-    question_list = sorted(questions, key=lambda k: k['likes'], reverse=True)
+    question_list = Question.manager.hot()
     paginator = Paginator(question_list, 10)
     return render(request, 'questions.html', {'questions': create_page(paginator, request.GET.get('page')),
                                               'title': 'Hot questions',
@@ -62,24 +34,21 @@ def hot_questions(request):
 
 
 def tags_question(request, tag):
-    tmp_questions = []
-    for question in questions:
-        if tag in question['tags']:
-            tmp_questions.append(question)
-    question_list = tmp_questions
+    question_list = Question.manager.by_tags(tag)
     paginator = Paginator(question_list, 10)
     return render(request, 'questions.html', {'questions': create_page(paginator, request.GET.get('page')),
                                               'title': 'Questions with tag: ' + tag,
                                               })
 
 
-def id_question(request, id):
-    answers_list = answers
+def id_question(request, q_id):
+    answers_list = Answer.manager.by_id(q_id)
+    question = Question.manager.by_id(q_id)
     paginator = Paginator(answers_list, 3)
     return render(request, 'answers.html', {
         'answers': create_page(paginator, request.GET.get('page')),
-        'question': questions[next(index for (index, d) in enumerate(questions) if str(d["id"]) == str(id))],
-        'title': "Question# " + str(id),
+        'question': question,
+        'title': "Question# " + str(q_id),
     })
 
 

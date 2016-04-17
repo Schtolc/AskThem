@@ -9,7 +9,7 @@
 
     <hr class="hr-style">
 
-    {% for answer in answers%}
+    {% for answer in answers %}
         {% include "single_answer.html" %}
     {% endfor %}
     {% include "paginator.html" with pages=answers %}
