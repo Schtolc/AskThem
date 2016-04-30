@@ -2,35 +2,35 @@
 
 
 {% block title %}
-Login
+    Login
 {% endblock %}
 
 {% block content %}
 <h2>Log In</h2>
 <hr class="hr-style">
-<form class="form-horizontal">
-    <p id="loginError">Wrong password</p>
-    <div class="form-group">
-        <label for="inputEmail" class="col-sm-1 control-label">Email</label>
-        <div class="col-sm-5">
-            <input class="form-control" id="inputEmail" placeholder="Enter your email" maxlength="35">
+{% if form.non_field_errors %}
+    <p>Wrong login or password</p>
+{% endif %}
+<form class="form-horizontal" method="post" action="{% url 'login_page' %}?next={{next}}">
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="form-group {% if field.errors %} has-error {% endif %}">
+        {{field.errors}}
+        <label for="input{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
+        <div class="col-sm-5" class="form-control" id="input{{ field.label }}">
+            {{ field }}
         </div>
     </div>
+    {% endfor %}
+
     <div class="form-group">
-        <label for="inputPassword" class="col-sm-1 control-label">Password</label>
-        <div class="col-sm-5">
-            <input type="password" class="form-control" id="inputPassword" placeholder="Enter your password"
-                   maxlength="35">
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-offset-1 col-sm-5">
+        <div class="col-sm-offset-2 col-sm-5">
             <button type="submit" class="btn btn-default alert-danger">Login</button>
         </div>
     </div>
 </form>
-<div class="col-sm-offset-1">
-    <p><a href="#">Create new account</a></p>
-
+<div class="col-sm-offset-2">
+    <p><a href="{% url 'signup' %}">Create new account</a></p>
 </div>
 {% endblock %}

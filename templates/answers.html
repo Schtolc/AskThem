@@ -5,23 +5,37 @@
 {% endblock %}
 
 {% block content %}
-    {% include "single_question.html" %}
 
-    <hr class="hr-style">
+{% include "single_question.html" %}
 
-    {% for answer in answers %}
-        {% include "single_answer.html" %}
+<hr class="hr-style">
+
+{% for answer in answers %}
+    {% include "single_answer.html" %}
+{% endfor %}
+
+{% include "paginator.html" with pages=answers %}
+
+<hr class="hr-style">
+{% if form.non_field_errors %}
+    <p>Wrong answer</p>
+{% endif %}
+<form class="form-horizontal" method="post" action="{% url 'id_question' question.id %}">
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="form-group {% if field.errors %} has-error {% endif %}">
+        {{field.errors}}
+        <label for="input{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
+        <div class="col-sm-5" class="form-control" id="input{{ field.label }}">
+            {{ field }}
+        </div>
+    </div>
     {% endfor %}
-    {% include "paginator.html" with pages=answers %}
-
-
-    <hr class="hr-style">
-            <form class="form-horizontal">
-                <div class="form-group">
-                        <textarea class="form-control" placeholder="Enter your answer here"></textarea>
-                </div>
-                <div class="form-group">
-                        <button type="submit" class="btn btn-default alert-danger">Ask</button>
-                </div>
-            </form>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-5">
+            <button type="submit" class="btn btn-default alert-danger">Ask</button>
+        </div>
+    </div>
+</form>
 {% endblock %}

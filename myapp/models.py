@@ -56,6 +56,7 @@ class Profile(models.Model):
     avatar = models.OneToOneField(User)
     pic = models.CharField(max_length=128)
 
+
 class Like(models.Model):
     user = models.ForeignKey(User)
     question = models.ForeignKey(Question)

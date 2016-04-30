@@ -8,44 +8,22 @@
 {% block content %}
 <h2>Registration</h2>
 <hr class="hr-style">
-<form class="form-horizontal">
-    <p id="registrationError">Sorry, this email address already registred!</p>
-    <div class="form-group">
-        <label for="inputLoginReg" class="col-sm-2 control-label">Login</label>
-        <div class="col-sm-5">
-            <input class="form-control" id="inputLoginReg" placeholder="Enter your login" maxlength="35">
+
+{% if form.non_field_errors %}
+    <p>{{form.non_field_errors}}</p>
+{% endif %}
+<form class="form-horizontal" method="post" action="{% url 'signup' %}">
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="form-group {% if field.errors %} has-error {% endif %}">
+        {{field.errors}}
+        <label for="input{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
+        <div class="col-sm-5" class="form-control" id="input{{ field.label }}">
+            {{ field }}
         </div>
     </div>
-    <div class="form-group">
-        <label for="inputEmailReg" class="col-sm-2 control-label">Email</label>
-        <div class="col-sm-5">
-            <input class="form-control" id="inputEmailReg" placeholder="Enter your email" maxlength="35">
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="inputNickReg" class="col-sm-2 control-label">NickName</label>
-        <div class="col-sm-5">
-            <input class="form-control" id="inputNickReg" placeholder="Enter your nick" maxlength="35">
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="inputPasswordReg" class="col-sm-2 control-label">Password</label>
-        <div class="col-sm-5">
-            <input type="password" class="form-control" id="inputPasswordReg" maxlength="35">
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="inputPasswordAgainReg" class="col-sm-2 control-label">Repeat password</label>
-        <div class="col-sm-5">
-            <input type="password" class="form-control" id="inputPasswordAgainReg" maxlength="35">
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="inputAvatarReg" class="col-sm-2 control-label">Upload avatar</label>
-        <div class="col-sm-5">
-            <input type="file" id="inputAvatarReg">
-        </div>
-    </div>
+    {% endfor %}
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-5">
             <button type="submit" class="btn btn-default alert-danger">Register</button>

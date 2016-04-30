@@ -20,10 +20,12 @@ from myapp import views as ask_views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^signup$', ask_views.signup, name='signup'),
-    url(r'^login$', ask_views.login, name='login'),
+    url(r'^login$', ask_views.login_page, name='login_page'),
     url(r'^ask$', ask_views.ask, name='ask'),
     url(r'^hot$', ask_views.hot_questions, name='hot_questions'),
     url(r'^tag/(?P<tag>\w+)$', ask_views.tags_question, name='tag_questions'),
     url(r'^question/(?P<q_id>\d+)$', ask_views.id_question, name='id_question'),
     url(r'^$', ask_views.new_questions, name='new_questions'),
+    url(r'^logout$', ask_views.logout_page, name='logout_page')
+
 ]
