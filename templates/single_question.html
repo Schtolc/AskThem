@@ -20,6 +20,7 @@
     <div class="col-md-10">
         <h2><a href="{% url 'id_question' question.id %}"> {{question.title}} {{question.id}}</a></h2>
         <p>{{question.text}}</p>
+        <p>By <a href="#">{{question.author.get_username}}</a> </p>
         <p>
             Tags:&nbsp;
             {% for tag in question.tags.all %}

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from myapp.models import Question, Tag, Answer
+from myapp.models import Question, Tag, Answer, Like
 from django.contrib.auth.models import User
 from faker import Factory
 import random
@@ -30,13 +30,22 @@ class Command(BaseCommand):
             q.tags.add(Tag.objects.get(id=random_tag_id), Tag.objects.get(id=random_tag_id + 1),
                        Tag.objects.get(id=random_tag_id - 1))
             q.save()
-            q.likes.add(User.objects.get(id=random_tag_id), User.objects.get(id=random_tag_id + 1),
-                        User.objects.get(id=random_tag_id - 1))
-            q.save()
 
         # generating answers
-        for i in range(0,1000):
+        for i in range(0, 1000):
             user = User.objects.get(id=random.randint(1, 10))
             q = Question.objects.get(id=random.randint(1, 100))
-            a = Answer(author = user, text = fake.text(), question = q)
+            a = Answer(author=user, text=fake.text(), question=q)
             a.save()
+
+        # generating likes
+        for i in range(0, 100):
+            random_user_id = random.randint(2, 9)
+            random_question_id = random.randint(1, 100)
+            q = Question.objects.get(id=random_question_id)
+            l = Like(user=User.objects.get(id=random_user_id), question=q, is_like=random.randint(0, 1))
+            l.save()
+            l = Like(user=User.objects.get(id=random_user_id+1), question=q, is_like=random.randint(0, 1))
+            l.save()
+            l = Like(user=User.objects.get(id=random_user_id-1), question=q, is_like=random.randint(0, 1))
+            l.save()
