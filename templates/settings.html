@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block content %}
+<h2>Settings</h2>
+<hr class="hr-style">
+
+{% if form_info.non_field_errors %}
+    <p>{{form_info.non_field_errors}}</p>
+{% endif %}
+<form class="form-horizontal" enctype="multipart/form-data" method="post" action="{% url 'edit' 'info' %}">
+    {% csrf_token %}
+
+    {% for field in form_info %}
+    <div class="form-group {% if field.errors %} has-error {% endif %}">
+        {{field.errors}}
+        <label for="input{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
+        <div class="col-sm-5" class="form-control" id="input{{ field.label }}">
+            {{ field }}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-5">
+            <button type="submit" class="btn btn-default alert-danger">Change Info</button>
+        </div>
+    </div>
+</form>
+
+
+{% if form_password.non_field_errors %}
+    <p>{{form_password.non_field_errors}}</p>
+{% endif %}
+<form class="form-horizontal" method="post" action="{% url 'edit' 'password' %}">
+     {% csrf_token %}
+
+     {% for field in form_password %}
+    <div class="form-group {% if field.errors %} has-error {% endif %}">
+        {{field.errors}}
+        <label for="input{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
+        <div class="col-sm-5" class="form-control" id="input{{ field.label }}">
+            {{ field }}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-5">
+            <button type="submit" class="btn btn-default alert-danger">Change Password</button>
+        </div>
+    </div>
+</form>
+
+
+
+
+{% endblock %}

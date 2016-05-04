@@ -41,25 +41,26 @@
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="Search">
                 </div>
-                <button type="submit" class="btn btn-default alert-danger">Ask!</button>
+                <button class="btn btn-default alert-danger">Search!</button>
+                <a href="{% url 'ask' %}">Ask question</a>
             </form>
-
+            {% load user_extras %}
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
-                <li><img src="/images/avatar.jpg" class="img-thumbnail " id="avatar"></li>
+                <li><img src="{% user_pic user.id %}" class="img-thumbnail" id="avatar"></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">{{user.get_username}} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
+                        <li><a href="{% url 'profile' request.user.get_username %}">Profile</a></li>
                         <li><a href="#">Settings</a></li>
-                        <li><a href="#">Answers</a></li>
                         <li role="separator" class="divider"></li>
-                        <!--<li><a href="{% url 'logout_page' %}?next={{ request.path }}">Log out</a></li>-->
                         <li><a href="{% url 'logout_page' %}?next={{ request.path }}">Log out</a></li>
                     </ul>
                 </li>
                 {% else %}
                 <li><a href="{% url 'login_page' %}?next={{ request.path }}">Log in</a></li>
+                 <!--<li><a href="{% url 'login_page' %}">Log in</a></li>-->
                 {% endif %}
             </ul>
         </div><!-- /.navbar-collapse -->

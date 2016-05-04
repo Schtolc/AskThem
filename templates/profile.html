@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{profile.avatar.get_username}}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-2">
+        <img src="{{profile.picture.url}}" class="img-circle profile-pic">
+    </div>
+    <div class="col-md-1">
+        <h3>Name:</h3>
+        <h3>Email:</h3>
+    </div>
+    <div class="col-md-8">
+        <h3>{{profile.avatar.get_username}}</h3>
+        <h3>{{profile.avatar.email}}</h3>
+    </div>
+</div>
+<h3>Questions: </h3>
+{% for question in questions %}
+    {% include "single_question.html" %}
+{% endfor %}
+<h3>Answers: </h3>
+{% for answer in answers %}
+    {% include "single_answer.html" %}
+{% endfor %}
+
+{% endblock %}

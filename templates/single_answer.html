@@ -1,6 +1,6 @@
 <div class="row brd"><!--Start of answer-->
     <div class="col-md-2">
-        <img src="/images/dog2.jpg" class="img-circle question-pic div-center">
+        <img src="/images/dog2.jpg" class="img-circle question-pic div-center" id="a_{{answer.id}}">
 
         <div class="div-center">
             <h5>{{answer.rating}}</h5>
@@ -22,7 +22,7 @@
     </div>
     <div class="col-md-10">
         <p>{{answer.text}}</p>
-        </p>
+        <p>By <a href="{% url 'profile' answer.author.get_username %}">{{answer.author.get_username}}</a> </p>
         <div class="checkbox">
             <label>
                 <input type="checkbox" value="">
