@@ -1,34 +1,22 @@
-<div class="row brd"><!--Start of answer-->
+<div class="row brd" id="a_{{answer.id}}"><!--Start of answer-->
     <div class="col-md-2">
-        <img src="/images/dog2.jpg" class="img-circle question-pic div-center" id="a_{{answer.id}}">
-
-        <div class="div-center">
-            <h5>{{answer.rating}}</h5>
-        </div>
-        <div class="btn-group btn-group-justified" role="group" aria-label="...">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-sm btn-success" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                </button>
-            </div>
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-sm btn-danger" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </button>
-            </div>
-        </div>
-
-
+        <img src="/images/dog2.jpg" class="img-circle question-pic div-center">
+        <h3><font color="green" id ="correct_{{answer.id}}"> {% if answer.is_correct %} Correct! {%endif%}</font></h3>
     </div>
     <div class="col-md-10">
+
         <p>{{answer.text}}</p>
-        <p>By <a href="{% url 'profile' answer.author.get_username %}">{{answer.author.get_username}}</a> </p>
+        <p>By <a href="{% url 'profile' answer.author.get_username %}">{{answer.author.get_username}}</a></p>
+        {% if request.user == question.author %}
         <div class="checkbox">
             <label>
-                <input type="checkbox" value="">
+                <input type="checkbox" class="correct" data-aid="{{answer.id}}" {% if answer.is_correct %} checked
+                       {%endif%}>
+
                 &nbsp;Correct!
             </label>
         </div>
+        {%endif%}
     </div>
 
 </div><!--End of answer-->

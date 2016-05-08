@@ -35,3 +35,7 @@ class UserChangePassword(forms.Form):
     old_password = forms.CharField(label='Previous password', max_length=100, widget=forms.PasswordInput())
     new_password = forms.CharField(label='New password', max_length=100, widget=forms.PasswordInput())
     password_again = forms.CharField(label='Repeat password', max_length=100, widget=forms.PasswordInput())
+
+
+class UserChangePicture(forms.Form):
+    picture = forms.ImageField(label='Picture')

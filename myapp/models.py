@@ -71,6 +71,11 @@ class ProfileManager(models.Manager):
         u.email = email
         u.save()
 
+    def change_pic(self, username, pic):
+        p = Profile.objects.by_username(username)
+        p.picture = pic
+        p.save()
+
     def change_password(self, new_password, username):
         u = User.objects.get(username=username)
         u.set_password(new_password)
@@ -101,12 +106,19 @@ class Question(models.Model):
     likes = models.ManyToManyField(User, related_name='likes_users', through='Like')
     objects = QuestionManager()
 
+    def _count_rating(self):
+        votes = Like.objects.filter(question=self)
+        return len(votes.filter(is_like=True)) - len(votes.filter(is_like=False))
+
+    likes_amount = property(_count_rating)
+
 
 class Answer(models.Model):
     text = models.TextField()
     author = models.ForeignKey(User)
     question = models.ForeignKey(Question)
     added_at = models.DateTimeField(default=timezone.now)
+    is_correct = models.BooleanField(default=False)
     objects = AnswerManager()
 
 

@@ -5,10 +5,12 @@
 {% endblock %}
 
 {% block content %}
-    {% for question in questions  %}
-        {% include "single_question.html" %}
-    {% endfor %}
-    {% include "paginator.html" with pages=questions %}
+
+{% for question in questions  %}
+    {% include "single_question.html" %}
+{% endfor %}
+<script src="/js/likes.js"></script>
+{% include "paginator.html" with pages=questions %}
 {% endblock %}
 
 
