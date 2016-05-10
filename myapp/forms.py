@@ -8,12 +8,16 @@ class UserLoginForm(forms.Form):
 
 
 class UserRegisterForm(forms.Form):
-    username = forms.CharField(label='Username', max_length=100)
-    email = forms.EmailField(label='Email', max_length=100)
-    password = forms.CharField(label='Password', max_length=100, widget=forms.PasswordInput())
-    password_again = forms.CharField(label='Repeat password', max_length=100, widget=forms.PasswordInput())
+    username = forms.CharField(label='Username', max_length=100, widget=forms.TextInput(
+        attrs={'class': 'form-control'}))
+    email = forms.EmailField(label='Email', max_length=100, widget=forms.EmailInput(
+        attrs={'class': 'form-control'}))
+    password = forms.CharField(label='Password', max_length=100, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password_again = forms.CharField(label='Repeat password', max_length=100, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     # pic = forms.CharField(label='Pic', max_length=100)
-    picture = forms.ImageField(label='Picture')
+    picture = forms.ImageField(label='Picture', widget=forms.FileInput())
+
+    # def clean_password
 
 
 class QuestionForm(forms.Form):

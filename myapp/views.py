@@ -52,7 +52,7 @@ def id_question(request, q_id):
         if request.user.is_authenticated():
             form = AnswerForm(request.POST)
             if form.is_valid():
-                a = Answer.objects.new_answer(request.POST['text'], request.user, question)
+                a = Answer.objects.new_answer(form.cleaned_data.get('text'), request.user, question)
                 page = Answer.objects.get_page(a.id, 6)
                 return HttpResponseRedirect('/question/' + str(int(q_id)) + '?page=' + str(page) + '#a_' + str(a.id))
         else:
@@ -71,16 +71,16 @@ def signup(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            if request.POST['password'] != request.POST['password_again']:
+            if form.cleaned_data.get('password') != form.cleaned_data.get('password_again'):
                 form.add_error(None, ValidationError(_('Passwords do not match')))
 
-            elif Profile.objects.email_in_use(request.POST['email']):
+            elif Profile.objects.email_in_use(form.cleaned_data.get('email')):
                 form.add_error(None, ValidationError(_('Email already exists')))
 
             else:
-                Profile.objects.new_user(request.POST['username'], request.POST['email'], request.POST['password'],
+                Profile.objects.new_user(form.cleaned_data.get('username'), form.cleaned_data.get('email'), form.cleaned_data.get('password'),
                                          request.FILES['picture'], )
-                user = authenticate(username=request.POST['username'], password=request.POST['password'])
+                user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
                 login(request, user)
                 return HttpResponseRedirect('/')
 
@@ -97,10 +97,10 @@ def edit(request, option):
         if option == 'info':
             form = UserChangeInfo(request.POST)
             if form.is_valid():
-                if Profile.objects.email_in_use(request.POST['email']):
+                if form.cleaned_data.get('email') != request.user.email and Profile.objects.email_in_use(form.cleaned_data.get('email')):
                     error = 'Email already exists'
                 else:
-                    Profile.objects.change_user(request.POST['username'], request.POST['email'],
+                    Profile.objects.change_user(form.cleaned_data.get('username'), form.cleaned_data.get('email'),
                                                 request.user.get_username())
                     error = 'Info changed'
             else:
@@ -109,12 +109,12 @@ def edit(request, option):
         elif option == 'password':
             form = UserChangePassword(request.POST)
             if form.is_valid():
-                if not request.user.check_password(request.POST['old_password']):
+                if not request.user.check_password(form.cleaned_data.get('old_password')):
                     error = 'Invalid password'
-                elif request.POST['new_password'] != request.POST['password_again']:
+                elif form.cleaned_data.get('new_password') != form.cleaned_data.get('password_again'):
                     error = 'Passwords do not match'
                 else:
-                    Profile.objects.change_password(request.POST['new_password'], request.user.get_username())
+                    Profile.objects.change_password(form.cleaned_data.get('new_password'), request.user.get_username())
                     error = 'Password changed'
             else:
                 error = 'All fields is required'
@@ -127,9 +127,9 @@ def edit(request, option):
             else:
                 error = 'All fields is required '
 
-    p = Profile.objects.by_username(request.user.get_username())
-    data = {'username': p.avatar.username,
-            'email': p.avatar.email,
+    # p = Profile.objects.by_username(request.user.get_username())
+    data = {'username': request.user.username,
+            'email': request.user.email,
             }
     form_info = UserChangeInfo(data)
     form_password = UserChangePassword()
@@ -145,8 +145,8 @@ def login_page(request):
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
         if form.is_valid():
-            username = request.POST['username']
-            password = request.POST['password']
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
@@ -171,8 +171,8 @@ def ask(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
         if form.is_valid():
-            q = Question.objects.new_question(request.POST['title'], request.POST['text'], request.user,
-                                              request.POST['tags'])
+            q = Question.objects.new_question(form.cleaned_data.get('title'), form.cleaned_data.get('text'), request.user,
+                                              form.cleaned_data.get('tags'))
             return HttpResponseRedirect('/question/' + str(q.id))
 
     else:
