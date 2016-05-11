@@ -9,22 +9,16 @@
 <h2>Registration</h2>
 <hr class="hr-style">
 
-{% if form.non_field_errors %}
-    <p>{{form.non_field_errors}}</p>
-{% endif %}
+<div  class="col-sm-offset-2 form_error" >
+    {{form.non_field_errors}}
+</div>
 <form class="form-horizontal" enctype="multipart/form-data" method="post" action="{% url 'signup' %}">
     {% csrf_token %}
 
     {% for field in form %}
-    <div class="form-group {% if field.errors %} has-error has-feedback {% endif %}">
-        <div class="col-sm-offset-2">{{field.errors}}</div>
-        <label for="{{ field.id_for_label }}" class="col-sm-2 control-label">{{ field.label }}</label> <!--field.id_for_label-->
-        <div class="col-sm-5">
-            {{ field }}
-            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-        </div>
-    </div>
+        {% include "form_field.html" %}
     {% endfor %}
+
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-5">
             <button type="submit" class="btn btn-default alert-danger">Register</button>

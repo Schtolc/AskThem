@@ -45,6 +45,10 @@
     color:red;
 }
 
+.form_error {
+    color:red;
+}
+
 .div-center {
     text-align: center;
 }

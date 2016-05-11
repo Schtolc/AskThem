@@ -9,19 +9,15 @@
 <h2>Log In</h2>
 <hr class="hr-style">
 {% if form.non_field_errors %}
-    <p>Wrong login or password</p>
+<div  class="col-sm-offset-2 form_error" >
+    {{form.non_field_errors}}
+</div>
 {% endif %}
 <form class="form-horizontal" method="post" action="{% url 'login_page' %}?next={{next}}">
     {% csrf_token %}
 
     {% for field in form %}
-    <div class="form-group {% if field.errors %} has-error {% endif %}">
-        {{field.errors}}
-        <label for="input{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
-        <div class="col-sm-5" class="form-control" id="input{{ field.label }}">
-            {{ field }}
-        </div>
-    </div>
+        {% include "form_field.html" %}
     {% endfor %}
 
     <div class="form-group">

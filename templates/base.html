@@ -55,7 +55,7 @@
                        aria-expanded="false">{{user.get_username}} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'profile' request.user.get_username %}">Profile</a></li>
-                        <li><a href="{% url 'edit' ''%}">Settings</a></li>
+                        <li><a href="{% url 'change_info' %}">Settings</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="{% url 'logout_page' %}?next={{ request.path }}">Log out</a></li>
                     </ul>

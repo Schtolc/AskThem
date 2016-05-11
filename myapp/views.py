@@ -49,14 +49,11 @@ def id_question(request, q_id):
     answers_list = Answer.objects.by_id(q_id)
     question = Question.objects.by_id(q_id)
     if request.method == 'POST':
-        if request.user.is_authenticated():
-            form = AnswerForm(request.POST)
-            if form.is_valid():
-                a = Answer.objects.new_answer(form.cleaned_data.get('text'), request.user, question)
-                page = Answer.objects.get_page(a.id, 6)
-                return HttpResponseRedirect('/question/' + str(int(q_id)) + '?page=' + str(page) + '#a_' + str(a.id))
-        else:
-            return HttpResponseRedirect('/login?next=/question/' + str(int(q_id)))
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            a = Answer.objects.new_answer(form.cleaned_data.get('text'), request.user, question)
+            page = Answer.objects.get_page(a.id, 6)
+            return HttpResponseRedirect('/question/' + str(int(q_id)) + '?page=' + str(page) + '#a_' + str(a.id))
     else:
         form = AnswerForm()
     return render(request, 'answers.html', {
@@ -71,18 +68,11 @@ def signup(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            if form.cleaned_data.get('password') != form.cleaned_data.get('password_again'):
-                form.add_error(None, ValidationError(_('Passwords do not match')))
-
-            elif Profile.objects.email_in_use(form.cleaned_data.get('email')):
-                form.add_error(None, ValidationError(_('Email already exists')))
-
-            else:
-                Profile.objects.new_user(form.cleaned_data.get('username'), form.cleaned_data.get('email'), form.cleaned_data.get('password'),
-                                         request.FILES['picture'], )
-                user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
-                login(request, user)
-                return HttpResponseRedirect('/')
+            Profile.objects.new_user(form.cleaned_data.get('username'), form.cleaned_data.get('email'),
+                                     form.cleaned_data.get('password'), request.FILES['picture'], )
+            user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
+            login(request, user)
+            return HttpResponseRedirect('/')
 
     else:
         form = UserRegisterForm()
@@ -90,64 +80,55 @@ def signup(request):
 
 
 @login_required()
-def edit(request, option):
-    error = ''
+def change_info(request):
     if request.method == 'POST':
+        form = UserChangeInfo(request.POST, request=request)
+        if form.is_valid():
+            Profile.objects.change_user(form.cleaned_data.get('username'), form.cleaned_data.get('email'),
+                                        request.user.get_username())
+    else:
+        form = UserChangeInfo(request=request)
 
-        if option == 'info':
-            form = UserChangeInfo(request.POST)
-            if form.is_valid():
-                if form.cleaned_data.get('email') != request.user.email and Profile.objects.email_in_use(form.cleaned_data.get('email')):
-                    error = 'Email already exists'
-                else:
-                    Profile.objects.change_user(form.cleaned_data.get('username'), form.cleaned_data.get('email'),
-                                                request.user.get_username())
-                    error = 'Info changed'
-            else:
-                error = 'All fields is required'
+    return render(request, 'settings.html', {'form_info': form, 'form_password': UserChangePassword(),
+                                             'form_picture': UserChangePicture()})
 
-        elif option == 'password':
-            form = UserChangePassword(request.POST)
-            if form.is_valid():
-                if not request.user.check_password(form.cleaned_data.get('old_password')):
-                    error = 'Invalid password'
-                elif form.cleaned_data.get('new_password') != form.cleaned_data.get('password_again'):
-                    error = 'Passwords do not match'
-                else:
-                    Profile.objects.change_password(form.cleaned_data.get('new_password'), request.user.get_username())
-                    error = 'Password changed'
-            else:
-                error = 'All fields is required'
 
-        elif option == 'picture':
-            form = UserChangePicture(request.POST, request.FILES)
-            if form.is_valid():
-                Profile.objects.change_pic(request.user.get_username(), request.FILES['picture'])
-                error = 'Picture changed'
-            else:
-                error = 'All fields is required '
+@login_required()
+def change_password(request):
+    if request.method == 'POST':
+        form = UserChangePassword(request.POST, request=request)
+        if form.is_valid():
+            Profile.objects.change_password(form.cleaned_data.get('new_password'), request.user.get_username())
+    else:
+        form = UserChangePassword()
 
-    # p = Profile.objects.by_username(request.user.get_username())
-    data = {'username': request.user.username,
-            'email': request.user.email,
-            }
-    form_info = UserChangeInfo(data)
-    form_password = UserChangePassword()
-    form_picture = UserChangePicture
-    if error != '':
-        form_info.add_error(None, ValidationError(_(error)))
-    return render(request, 'settings.html', {'form_info': form_info,
-                                             'form_password': form_password,
-                                             'form_picture': form_picture})
+    form_info = UserChangeInfo({'username': request.user.username,
+                                'email': request.user.email,}, request=request)
+    return render(request, 'settings.html', {'form_info': form_info, 'form_password': form,
+                                             'form_picture': UserChangePicture()})
+
+
+@login_required()
+def change_pic(request):
+    if request.method == 'POST':
+        form = UserChangePicture(request.POST, request.FILES)
+        if form.is_valid():
+            Profile.objects.change_pic(request.user.get_username(), request.FILES['picture'])
+    else:
+        form = UserChangePicture()
+
+    form_info = UserChangeInfo({'username': request.user.username,
+                                'email': request.user.email,},
+                               request=request)
+    return render(request, 'settings.html', {'form_info': form_info, 'form_password': UserChangePassword(),
+                                             'form_picture': form})
 
 
 def login_page(request):
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
+            user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect(request.GET.get('next', '/'))
@@ -156,14 +137,12 @@ def login_page(request):
     else:
         form = UserLoginForm()
 
-    return render(request, 'login.html', {'form': form,
-                                          'next': request.GET.get('next', '/')})
+    return render(request, 'login.html', {'form': form, 'next': request.GET.get('next', '/')})
 
 
 def logout_page(request):
     logout(request)
-    redirect_to = request.GET.get('next', '/')
-    return HttpResponseRedirect(redirect_to)
+    return HttpResponseRedirect(request.GET.get('next', '/'))
 
 
 @login_required()
@@ -171,8 +150,8 @@ def ask(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
         if form.is_valid():
-            q = Question.objects.new_question(form.cleaned_data.get('title'), form.cleaned_data.get('text'), request.user,
-                                              form.cleaned_data.get('tags'))
+            q = Question.objects.new_question(form.cleaned_data.get('title'), form.cleaned_data.get('text'),
+                                              request.user, form.cleaned_data.get('tags'))
             return HttpResponseRedirect('/question/' + str(q.id))
 
     else:

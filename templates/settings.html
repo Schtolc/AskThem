@@ -1,28 +1,17 @@
 {% extends "base.html" %}
 
-
 {% block title %}
-    Settings
+Settings
 {% endblock %}
 
 {% block content %}
 <h2>Settings</h2>
 <hr class="hr-style">
 
-{% if form_info.non_field_errors %}
-    <p>{{form_info.non_field_errors}}</p>
-{% endif %}
-<form class="form-horizontal" enctype="multipart/form-data" method="post" action="{% url 'edit' 'info' %}">
+<form class="form-horizontal" method="post" action="{% url 'change_info' %}">
     {% csrf_token %}
-
     {% for field in form_info %}
-    <div class="form-group {% if field.errors %} has-error {% endif %}">
-        {{field.errors}}
-        <label for="input{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
-        <div class="col-sm-5" class="form-control" id="input{{ field.label }}">
-            {{ field }}
-        </div>
-    </div>
+        {% include "form_field.html" %}
     {% endfor %}
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-5">
@@ -31,18 +20,10 @@
     </div>
 </form>
 
-
-<form class="form-horizontal" method="post" action="{% url 'edit' 'password' %}">
-     {% csrf_token %}
-
-     {% for field in form_password %}
-    <div class="form-group {% if field.errors %} has-error {% endif %}">
-        {{field.errors}}
-        <label for="input{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
-        <div class="col-sm-5" class="form-control" id="input{{ field.label }}">
-            {{ field }}
-        </div>
-    </div>
+<form class="form-horizontal" method="post" action="{% url 'change_password' %}">
+    {% csrf_token %}
+    {% for field in form_password %}
+        {% include "form_field.html" %}
     {% endfor %}
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-5">
@@ -51,17 +32,10 @@
     </div>
 </form>
 
-<form class="form-horizontal" enctype="multipart/form-data" method="post" action="{% url 'edit' 'picture' %}">
+<form class="form-horizontal" enctype="multipart/form-data" method="post" action="{% url 'change_pic' %}">
     {% csrf_token %}
-
     {% for field in form_picture %}
-    <div class="form-group {% if field.errors %} has-error {% endif %}">
-        {{field.errors}}
-        <label for="input{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
-        <div class="col-sm-5" class="form-control" id="input{{ field.label }}">
-            {{ field }}
-        </div>
-    </div>
+        {% include "form_field.html" %}
     {% endfor %}
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-5">
@@ -69,6 +43,4 @@
         </div>
     </div>
 </form>
-
-
 {% endblock %}

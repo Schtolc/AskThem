@@ -81,12 +81,6 @@ class ProfileManager(models.Manager):
         u.set_password(new_password)
         u.save()
 
-    def email_in_use(self, email):
-        if len(User.objects.all().filter(email=email)) != 0:
-            return True
-        else:
-            return False
-
     def by_username(self, username):
         u = User.objects.get(username=username)
         return self.get(avatar=u)

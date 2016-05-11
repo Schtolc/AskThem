@@ -31,8 +31,10 @@ urlpatterns = [
     url(r'^$', ask_views.new_questions, name='new_questions'),
     url(r'^logout$', ask_views.logout_page, name='logout_page'),
     url(r'^profile/(?P<username>\w+)$', ask_views.profile, name='profile'),
-    url(r'^edit/(?P<option>\w*)$', ask_views.edit, name='edit'),
+    url(r'^changeinfo$', ask_views.change_info, name='change_info'),
+    url(r'^changepassword$', ask_views.change_password, name='change_password'),
+    url(r'^changepic$', ask_views.change_pic, name='change_pic'),
     url(r'^correct$', ask_views.correct, name='correct'),
-     url(r'^like$', ask_views.like, name='like'),
+    url(r'^like$', ask_views.like, name='like'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
