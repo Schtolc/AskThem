@@ -41,46 +41,12 @@ class QuestionManager(models.Manager):
         except Question.DoesNotExist:
             raise Http404("Question does not exist")
 
-    def new_question(self, title, text, author, tags):
-        q = Question(title=title, text=text, author=author)
-        q.save()
-        for tag in tags.replace(' ', '').split(','):
-            t = Tag.objects.all().filter(title=tag).first()
-            if not t:
-                t = Tag(title=tag)
-                t.save()
-            q.tags.add(t)
-            q.save()
-        return self.get(id=q.id)
-
     def by_username(self, username):
         u = User.objects.get(username=username)
         return self.filter(author=u)
 
 
 class ProfileManager(models.Manager):
-    def new_user(self, username, email, password, pic):
-        u = User.objects.create_user(username=username, email=email, password=password)
-        u.save()
-        p = Profile(avatar=u, picture=pic)
-        p.save()
-
-    def change_user(self, new_username, email, old_username):
-        u = User.objects.get(username=old_username)
-        u.username = new_username
-        u.email = email
-        u.save()
-
-    def change_pic(self, username, pic):
-        p = Profile.objects.by_username(username)
-        p.picture = pic
-        p.save()
-
-    def change_password(self, new_password, username):
-        u = User.objects.get(username=username)
-        u.set_password(new_password)
-        u.save()
-
     def by_username(self, username):
         u = User.objects.get(username=username)
         return self.get(avatar=u)

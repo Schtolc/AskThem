@@ -1,18 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth import authenticate, login, logout
-from myapp.models import *
 from myapp.forms import *
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
 from django.http.response import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.core.files.uploadedfile import SimpleUploadedFile
 import json
 
 
-# Create your views here.
-
+#
+# utility functions
+#
 def create_page(data_list, data_on_page, page):
     paginator = Paginator(data_list, data_on_page)
     try:
@@ -24,6 +22,9 @@ def create_page(data_list, data_on_page, page):
     return page_answers
 
 
+#
+# simple render views
+#
 def new_questions(request):
     question_list = Question.objects.new()
     return render(request, 'questions.html', {'questions': create_page(question_list, 10, request.GET.get('page')),
@@ -45,15 +46,75 @@ def tags_question(request, tag):
                                               })
 
 
+def profile(request, username):
+    u = Profile.objects.by_username(username)
+    questions = Question.objects.by_username(username)
+    answers = Answer.objects.by_username(username)
+    return render(request, 'profile.html', {
+        'profile': u,
+        'questions': questions,
+        'answers': answers
+    })
+
+
+#
+# forms views
+#
+def signup(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
+            login(request, user)
+            return HttpResponseRedirect('/')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'signup.html', {'form': form})
+
+
+def login_page(request):
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(request.GET.get('next', '/'))
+            else:
+                form.add_error(None, ValidationError('Wrong login or password'))
+    else:
+        form = UserLoginForm()
+
+    return render(request, 'login.html', {'form': form, 'next': request.GET.get('next', '/')})
+
+
+@login_required()
+def logout_page(request):
+    logout(request)
+    return HttpResponseRedirect(request.GET.get('next', '/'))
+
+
+@login_required()
+def ask(request):
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            qid = form.save(request=request)
+            return HttpResponseRedirect('/question/' + str(qid))
+    else:
+        form = QuestionForm()
+    return render(request, 'ask.html', {'form': form})
+
+
 def id_question(request, q_id):
     answers_list = Answer.objects.by_id(q_id)
     question = Question.objects.by_id(q_id)
     if request.method == 'POST':
         form = AnswerForm(request.POST)
         if form.is_valid():
-            a = Answer.objects.new_answer(form.cleaned_data.get('text'), request.user, question)
-            page = Answer.objects.get_page(a.id, 6)
-            return HttpResponseRedirect('/question/' + str(int(q_id)) + '?page=' + str(page) + '#a_' + str(a.id))
+            (aid, page) = form.save(request=request, question=question)
+            return HttpResponseRedirect('/question/' + str(q_id) + '?page=' + str(page) + '#a_' + str(aid))
     else:
         form = AnswerForm()
     return render(request, 'answers.html', {
@@ -64,28 +125,12 @@ def id_question(request, q_id):
     })
 
 
-def signup(request):
-    if request.method == 'POST':
-        form = UserRegisterForm(request.POST, request.FILES)
-        if form.is_valid():
-            Profile.objects.new_user(form.cleaned_data.get('username'), form.cleaned_data.get('email'),
-                                     form.cleaned_data.get('password'), request.FILES['picture'], )
-            user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
-            login(request, user)
-            return HttpResponseRedirect('/')
-
-    else:
-        form = UserRegisterForm()
-    return render(request, 'signup.html', {'form': form})
-
-
 @login_required()
 def change_info(request):
     if request.method == 'POST':
         form = UserChangeInfo(request.POST, request=request)
         if form.is_valid():
-            Profile.objects.change_user(form.cleaned_data.get('username'), form.cleaned_data.get('email'),
-                                        request.user.get_username())
+            form.save()
     else:
         form = UserChangeInfo(request=request)
 
@@ -98,7 +143,7 @@ def change_password(request):
     if request.method == 'POST':
         form = UserChangePassword(request.POST, request=request)
         if form.is_valid():
-            Profile.objects.change_password(form.cleaned_data.get('new_password'), request.user.get_username())
+            form.save()
     else:
         form = UserChangePassword()
 
@@ -113,7 +158,7 @@ def change_pic(request):
     if request.method == 'POST':
         form = UserChangePicture(request.POST, request.FILES)
         if form.is_valid():
-            Profile.objects.change_pic(request.user.get_username(), request.FILES['picture'])
+            form.save(request=request)
     else:
         form = UserChangePicture()
 
@@ -124,53 +169,9 @@ def change_pic(request):
                                              'form_picture': form})
 
 
-def login_page(request):
-    if request.method == 'POST':
-        form = UserLoginForm(request.POST)
-        if form.is_valid():
-            user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
-            if user is not None:
-                login(request, user)
-                return HttpResponseRedirect(request.GET.get('next', '/'))
-            else:
-                form.add_error(None, ValidationError(_('Wrong login or password')))
-    else:
-        form = UserLoginForm()
-
-    return render(request, 'login.html', {'form': form, 'next': request.GET.get('next', '/')})
-
-
-def logout_page(request):
-    logout(request)
-    return HttpResponseRedirect(request.GET.get('next', '/'))
-
-
-@login_required()
-def ask(request):
-    if request.method == 'POST':
-        form = QuestionForm(request.POST)
-        if form.is_valid():
-            q = Question.objects.new_question(form.cleaned_data.get('title'), form.cleaned_data.get('text'),
-                                              request.user, form.cleaned_data.get('tags'))
-            return HttpResponseRedirect('/question/' + str(q.id))
-
-    else:
-        form = QuestionForm()
-
-    return render(request, 'ask.html', {'form': form})
-
-
-def profile(request, username):
-    u = Profile.objects.by_username(username)
-    questions = Question.objects.by_username(username)
-    answers = Answer.objects.by_username(username)
-    return render(request, 'profile.html', {
-        'profile': u,
-        'questions': questions,
-        'answers': answers
-    })
-
-
+#
+# ajax views
+#
 @login_required()
 def correct(request):
     a = Answer.objects.get(id=request.POST['aid'])
