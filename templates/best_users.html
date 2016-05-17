@@ -1,0 +1,3 @@
+{% for d in data %}
+    <p><a href="{% url 'profile' d.name %}">{{d.name}}</a></p>
+{% endfor %}

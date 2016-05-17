@@ -13,7 +13,9 @@
 {% for answer in answers %}
     {% include "single_answer.html" %}
 {% endfor %}
+<div id="cometMagic">
 
+</div>
 <script src="/js/likes.js"></script>
 <script src="/js/correct.js"></script>
 {% include "paginator.html" with pages=answers %}
@@ -31,5 +33,6 @@
         </div>
     </div>
 </form>
+<script src="/js/longpolling.js"></script>
 {% endif %}
 {% endblock %}

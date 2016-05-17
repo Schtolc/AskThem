@@ -1,0 +1,3 @@
+{% for d in data %}
+    <p><a href="{% url 'tag_questions' d.name  %}">{{d.name}}</a></p>
+{% endfor %}

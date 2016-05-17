@@ -5,7 +5,9 @@ from myapp.forms import *
 from django.core.exceptions import ValidationError
 from django.http.response import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 import json
+import requests
 
 
 #
@@ -55,6 +57,11 @@ def profile(request, username):
         'questions': questions,
         'answers': answers
     })
+
+
+def single_answer(request):
+    a = Answer.objects.get(id=request.GET['aid'])
+    return render(request, "single_answer.html", {'answer': a})
 
 
 #
@@ -114,6 +121,7 @@ def id_question(request, q_id):
         form = AnswerForm(request.POST)
         if form.is_valid():
             (aid, page) = form.save(request=request, question=question)
+            requests.post('http://127.0.0.1/publish/', params={'cid': q_id}, data=str(aid))
             return HttpResponseRedirect('/question/' + str(q_id) + '?page=' + str(page) + '#a_' + str(aid))
     else:
         form = AnswerForm()

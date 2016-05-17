@@ -1,6 +1,7 @@
 from django import template
 from django.contrib.auth.models import User
 from myapp.models import *
+from django.core.cache import cache
 
 register = template.Library()
 
@@ -22,3 +23,19 @@ def user_pic(u_id):
     u = User.objects.get(id=u_id)
     p = Profile.objects.get(avatar=u)
     return str(p.picture.url)
+
+
+@register.inclusion_tag("best_users.html")
+def best_users():
+    data = cache.get('best_users', 'has_expired')
+    return {
+        'data': data,
+    }
+
+
+@register.inclusion_tag("best_tags.html")
+def best_tags():
+    data = cache.get('best_tags', 'has_expired')
+    return {
+        'data': data,
+    }
